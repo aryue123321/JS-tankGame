@@ -5,8 +5,12 @@ const box = document.querySelector('.box');
 const statusBar = document.getElementById('statusBar');
 const boxCenter = [box.offsetLeft + box.offsetWidth/2, box.offsetTop + box.offsetHeight/2];
 const icons = ['angry', 'basketball-ball', 'baseball-ball','accessible-icon','ambulance','centos'];
-
-console.log(boxCenter);
+const border = {
+  top: statusBar.offsetHeight,
+  right: container.offsetWidth,
+  bottom : container.offsetHeight + statusBar.offsetHeight,
+  left: 0
+}
 
 let player;
 let gamePlay = false;
@@ -52,15 +56,37 @@ function randomInt(range){
 
 function makeOneBadGuy(){
   const div = document.createElement('div');
-  div.classList.add('baddy', 'fa', `fa-${icons[randomInt(icons.length)]}`);
+  div.classList.add('baddy');
+  div.innerHTML = `<i class="fas fa-${icons[randomInt(icons.length)]}"></i>`;
   
-  switch(randomInt(0)){
+  switch(randomInt(4)){
     case 0:
-      div.style.left = 0 +'px';
+      div.style.left = -20 +'px';
       div.style.top = statusBar.offsetHeight+20+randomInt(container.offsetHeight-statusBar.offsetHeight-50) +'px';
-      div.rx = 3 + randomInt(3);
+      div.rx = 4 + randomInt(3);
+      div.ry = 4 + randomInt(3);
+      break;
+    case 1:
+      div.style.left = randomInt(container.offsetWidth) +'px';
+      div.style.top = statusBar.offsetHeight +'px';
+      div.rx = 4 + randomInt(3);
+      div.ry = 4 + randomInt(3);
+      break;
+    case 2:
+      div.style.left = container.offsetWidth +'px';
+      div.style.top = statusBar.offsetHeight+20+randomInt(container.offsetHeight-statusBar.offsetHeight-50) +'px';
+      div.rx = (4 + randomInt(3))*-1;
+      div.ry = 4 + randomInt(3);
+      break;
+    case 3:
+      div.style.left = randomInt(container.offsetWidth) +'px';
+      div.style.top = container.offsetHeight-15 +'px';
+      div.rx = 4 + randomInt(3);
+      div.ry = (4 + randomInt(3))*-1;
+      break;
       
   }
+  console.log(typeof div.rx + ' ' + typeof div.ry);
   container.appendChild(div);
 }
 
@@ -78,7 +104,7 @@ function startGame(){
     lives : 100,
     barWidth: 100
   }
-  generateBadGuys(100);
+  generateBadGuys(10);
   animateGame = requestAnimationFrame(playGame);
 }
 
@@ -87,7 +113,19 @@ function moveShots(){
   let shots = document.querySelectorAll('.fireme');
   shots.forEach(x => {
     if (x.offsetTop > container.offsetHeight-statusBar.offsetHeight || x.offsetTop < statusBar.offsetHeight+20 || x.offsetLeft < 0 || x.offsetLeft > container.offsetWidth){
-      x.parentNode.removeChild(x);
+      x.remove();
+    }else{
+      x.style.left = `${x.offsetLeft + x.rx}px`;
+      x.style.top = `${x.offsetTop + x.ry}px`;
+    }
+  });
+}
+
+function moveEnemies(){
+  let enemies = document.querySelectorAll('.baddy');
+  enemies.forEach(x => {
+    if (x.offsetHeight > container.offsetHeight-statusBar.offsetHeight+10 || x.offsetTop < statusBar.offsetHeight || x.offsetLeft < -10 || x.offsetLeft > container.offsetWidth+10){
+      x.remove();
     }else{
       x.style.left = `${x.offsetLeft + x.rx}px`;
       x.style.top = `${x.offsetTop + x.ry}px`;
@@ -98,6 +136,7 @@ function moveShots(){
 function playGame(){
   if (gamePlay){
     moveShots();
+    moveEnemies();
     animateGame = requestAnimationFrame(playGame);
   }
 }
