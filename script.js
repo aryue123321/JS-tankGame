@@ -55,8 +55,8 @@ function randomInt(range){
 }
 
 function isCollide(a, b){
-  let aRect = a.getBoudingClientRect();
-  let bRect = a.getBoudingClientRect();
+  let aRect = a.getBoundingClientRect();
+  let bRect = a.getBoundingClientRect();
   return !((aRect.bottom < bRect.top) || (aRect.top > bRect.bottom) || (aRect.right < bRect.left) || (aRect.left > bRect.right));
 }
 
