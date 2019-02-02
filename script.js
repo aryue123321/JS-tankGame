@@ -8,7 +8,7 @@ const icons = ['angry', 'basketball-ball', 'baseball-ball','accessible-icon','am
 const border = {
   top: statusBar.offsetHeight,
   right: container.offsetWidth,
-  bottom : container.offsetHeight + statusBar.offsetHeight,
+  bottom : container.offsetHeight-statusBar.offsetHeight,
   left: 0
 }
 
@@ -54,6 +54,12 @@ function randomInt(range){
   return Math.floor(Math.random()*range);
 }
 
+function isCollide(a, b){
+  let aRect = a.getBoudingClientRect();
+  let bRect = a.getBoudingClientRect();
+  return !((aRect.bottom < bRect.top) || (aRect.top > bRect.bottom) || (aRect.right < bRect.left) || (aRect.left > bRect.right));
+}
+
 function makeOneBadGuy(){
   const div = document.createElement('div');
   div.classList.add('baddy');
@@ -97,6 +103,7 @@ function generateBadGuys(num){
 }
 
 function startGame(){
+  console.log(isCollide(box, container));
   gamePlay = true;
   gameOverEle.style.display = 'none';
   player = {
@@ -109,10 +116,12 @@ function startGame(){
 }
 
 
+
+
 function moveShots(){
   let shots = document.querySelectorAll('.fireme');
   shots.forEach(x => {
-    if (x.offsetTop > container.offsetHeight-statusBar.offsetHeight || x.offsetTop < statusBar.offsetHeight+20 || x.offsetLeft < 0 || x.offsetLeft > container.offsetWidth){
+    if (x.offsetTop > border.bottom || x.offsetTop < border.top || x.offsetLeft < border.left || x.offsetLeft > border.right){
       x.remove();
     }else{
       x.style.left = `${x.offsetLeft + x.rx}px`;
@@ -124,7 +133,7 @@ function moveShots(){
 function moveEnemies(){
   let enemies = document.querySelectorAll('.baddy');
   enemies.forEach(x => {
-    if (x.offsetHeight > container.offsetHeight-statusBar.offsetHeight+10 || x.offsetTop < statusBar.offsetHeight || x.offsetLeft < -10 || x.offsetLeft > container.offsetWidth+10){
+    if (x.offsetTop > border.bottom || x.offsetTop < border.top || x.offsetLeft < border.left || x.offsetLeft > border.right){
       x.remove();
     }else{
       x.style.left = `${x.offsetLeft + x.rx}px`;
